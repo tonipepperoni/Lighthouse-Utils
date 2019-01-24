@@ -1,5 +1,5 @@
 {
-  "name": "deinternetjongens/lighthouse-utils",
+  "name": "tonipepperoni/lighthouse-utils",
   "description": "A Laravel Lighthouse addon with several utilities to automatically generate an awesome GraphQL API",
   "license": "MIT",
   "keywords": [
