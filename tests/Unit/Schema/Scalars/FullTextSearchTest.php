@@ -2,31 +2,17 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Schema\Scalars;
 
-use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
-use GraphQL\Error\Error;
-use GraphQL\Language\AST\BooleanValueNode;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch as FullTextSearchScalar;
+use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
 use GraphQL\Language\AST\StringValueNode;
-use PHPUnit\Framework\TestCase;
 
-class PostalCodeNlTest extends TestCase
+class FullTextSearchTest extends TestCase
 {
     public function parseValueDataProvider(): array
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS'
-            ],
-            'Postalcode wrong pattern with space' => [
-                'input' => '8111 BS',
-                'expected exception' => Error::class,
-            ],
-            'Postalcode wrong pattern no numbers' => [
-                'input' => 'AAAABS',
-                'expected exception' => Error::class,
-            ],
-            'Postalcode wrong pattern no letters' => [
-                'input' => '123412',
-                'expected exception' => Error::class,
+                'input' => 'test'
             ],
         ];
     }
@@ -35,14 +21,12 @@ class PostalCodeNlTest extends TestCase
      * @param string $input
      * @param string $expectedException
      * @return void
-     * @throws Error
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
+     * @throws \GraphQL\Error\Error
      * @dataProvider parseValueDataProvider
      */
     public function testParseValue(string $input, string $expectedException = '')
     {
+
         if ($expectedException !== '') {
             $this->expectException($expectedException);
         }
@@ -59,18 +43,17 @@ class PostalCodeNlTest extends TestCase
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS',
-                'expected result' => '8111BS'
+                'input' => 'test',
+                'expected result' => 'test'
             ],
         ];
     }
 
     /**
+     * @param $input
+     * @param $expectedResult
      * @return void
-     * @throws Error
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     *
+     * @throws \GraphQL\Error\Error
      * @dataProvider serializeDataProvider
      */
     public function testSerialize($input, $expectedResult)
@@ -85,18 +68,8 @@ class PostalCodeNlTest extends TestCase
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS',
+                'input' => 'test',
                 'node class' => StringValueNode::class,
-            ],
-            'Invalid format' => [
-                'input' => '8111 BS',
-                'node class' => StringValueNode::class,
-                'exception' => Error::class,
-            ],
-            'Invalid node type' => [
-                'input' => '8111BS',
-                'node class' => BooleanValueNode::class,
-                'exception' => Error::class,
             ],
         ];
     }
@@ -106,10 +79,7 @@ class PostalCodeNlTest extends TestCase
      * @param string $nodeClass
      * @param string $exception
      * @return void
-     * @throws Error
-     * @throws \InvalidArgumentException
-     * @throws ExpectationFailedException
-     * @throws InvalidArgumentException
+     * @throws \Exception
      * @dataProvider parseLiteralDataProvider
      */
     public function testParseLiteral(string $input, string $nodeClass, string $exception = ''): void
@@ -132,8 +102,8 @@ class PostalCodeNlTest extends TestCase
         $this->assertEquals($result, $expectedResult);
     }
 
-    private function getScalar(): PostalCodeNl
+    private function getScalar(): FullTextSearchScalar
     {
-        return new PostalCodeNl();
+        return new FullTextSearchScalar([]);
     }
 }

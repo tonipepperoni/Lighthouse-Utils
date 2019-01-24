@@ -1,6 +1,7 @@
 # Lighthouse Utils
 [![Build Status](https://travis-ci.org/deInternetJongens/Lighthouse-Utils.svg?branch=develop)](https://travis-ci.org/deInternetJongens/Lighthouse-Utils)
 [![Code Coverage](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils/branch/develop/graph/badge.svg)](https://codecov.io/gh/deInternetJongens/Lighthouse-Utils)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/deInternetJongens/Lighthouse-Utils/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/deInternetJongens/Lighthouse-Utils/?branch=develop)
 [![Latest Unstable Version](https://poser.pugx.org/deinternetjongens/lighthouse-utils/v/unstable)](https://packagist.org/packages/deinternetjongens/lighthouse-utils)
 
 This package can generate queries for the [Lighthouse GraphQL library](https://github.com/nuwave/lighthouse).
@@ -18,6 +19,11 @@ Install via composer
 ```bash
 composer require deinternetjongens/lighthouse-utils
 ```
+Alternatively, you can try the example installation below.
+
+### Example installation
+
+An example installation is available at: https://github.com/maarten00/lighthouse-utils-example
 
 ### Register Service Provider
 
@@ -114,6 +120,24 @@ A date string with format Y-m-d H:i:s+P. Example: "2018-01-01 13:00:00+00:00"
 
 A postal code as valid for The Netherlands, format 1111aa. Example: "7311SZ"
 
+#### Email
+
+An RFC 5321 compliant e-mail
+
+#### FullTextSearch
+
+Indicates that a field searches through multiple fields.
+To use this scalar, you need to add a scope on your model `scopeFullTextSearch`. Example: 
+```php
+public function scopeFullTextSearch(Builder $builder, $value)
+{
+    return $builder->whereRaw("column_one % ? OR column_two % ?", [$value, $value])
+        ->orderByRaw('column_two <-> ?', [$value]);
+}
+```
+
+In the scope you can basically define whatever kind of query you want.
+
 ### Directives
 
 To run more advanced queries, a couple of directives are included. 
@@ -134,6 +158,7 @@ Currently these directives are included:
 - not_in (comma seperated string)
 - not_starts_with
 - starts_with
+- fullTextSearch
 
 ### Migrations
 

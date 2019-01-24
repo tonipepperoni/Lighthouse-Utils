@@ -2,32 +2,26 @@
 
 namespace DeInternetJongens\LighthouseUtils\Tests\Unit\Schema\Scalars;
 
-use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
+use DeInternetJongens\LighthouseUtils\Tests\Unit\TestCase;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 use GraphQL\Error\Error;
 use GraphQL\Language\AST\BooleanValueNode;
 use GraphQL\Language\AST\StringValueNode;
-use PHPUnit\Framework\TestCase;
 
-class PostalCodeNlTest extends TestCase
+class EmailTest extends TestCase
 {
     public function parseValueDataProvider(): array
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS'
+                'input' => 'test@example.com'
             ],
-            'Postalcode wrong pattern with space' => [
-                'input' => '8111 BS',
-                'expected exception' => Error::class,
-            ],
-            'Postalcode wrong pattern no numbers' => [
-                'input' => 'AAAABS',
-                'expected exception' => Error::class,
-            ],
-            'Postalcode wrong pattern no letters' => [
-                'input' => '123412',
-                'expected exception' => Error::class,
-            ],
+            'Invalid pattern' => [
+                'input' => 'This is so wrong.',
+                'expected exception' => Error::class
+            ]
         ];
     }
 
@@ -43,6 +37,7 @@ class PostalCodeNlTest extends TestCase
      */
     public function testParseValue(string $input, string $expectedException = '')
     {
+
         if ($expectedException !== '') {
             $this->expectException($expectedException);
         }
@@ -59,8 +54,8 @@ class PostalCodeNlTest extends TestCase
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS',
-                'expected result' => '8111BS'
+                'input' => 'test@example.com',
+                'expected result' => 'test@example.com'
             ],
         ];
     }
@@ -72,6 +67,8 @@ class PostalCodeNlTest extends TestCase
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      *
      * @dataProvider serializeDataProvider
+     *
+     * $email->serialize() doesn't do much, we're just sending the e-mails we have in the response.
      */
     public function testSerialize($input, $expectedResult)
     {
@@ -85,16 +82,16 @@ class PostalCodeNlTest extends TestCase
     {
         return [
             'Happy flow' => [
-                'input' => '8111BS',
+                'input' => 'test@example.com',
                 'node class' => StringValueNode::class,
             ],
             'Invalid format' => [
-                'input' => '8111 BS',
+                'input' => 'Wrong format',
                 'node class' => StringValueNode::class,
                 'exception' => Error::class,
             ],
             'Invalid node type' => [
-                'input' => '8111BS',
+                'input' => 'test@example.com',
                 'node class' => BooleanValueNode::class,
                 'exception' => Error::class,
             ],
@@ -132,8 +129,8 @@ class PostalCodeNlTest extends TestCase
         $this->assertEquals($result, $expectedResult);
     }
 
-    private function getScalar(): PostalCodeNl
+    private function getScalar(): Email
     {
-        return new PostalCodeNl();
+        return new Email(new EmailValidator(), new RFCValidation());
     }
 }

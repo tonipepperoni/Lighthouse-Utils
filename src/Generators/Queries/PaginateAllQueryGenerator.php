@@ -5,6 +5,8 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Queries;
 use DeInternetJongens\LighthouseUtils\Models\GraphQLSchema;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\FullTextSearch;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IDType;
@@ -24,7 +26,9 @@ class PaginateAllQueryGenerator
         Date::class,
         DateTime::class,
         DateTimeTz::class,
-        EnumType::class
+        EnumType::class,
+        Email::class,
+        FullTextSearch::class,
     ];
 
     /**
@@ -46,8 +50,12 @@ class PaginateAllQueryGenerator
                 continue;
             }
 
-            // Add all our custom directives
+            if ($field instanceof FullTextSearch) {
+                $arguments[] = sprintf('%s: %s @fulltext', $fieldName, $field->name);
+                continue;
+            }
 
+            // Add all our custom directives
             $arguments[] = sprintf('%s: %s @eq', $fieldName, $field->name);
             $arguments[] = sprintf('%s_not: %s @not', $fieldName, $field->name);
             $arguments[] = sprintf('%s_in: [%s] @in', $fieldName, $field->name);
@@ -78,11 +86,11 @@ class PaginateAllQueryGenerator
             return '';
         }
 
-        $allQueryName = str_plural(strtolower($typeName));
+        $allQueryName = str_plural(lcfirst($typeName));
         $queryArguments = sprintf('(%s)', implode(', ', $arguments));
         $allQuery = sprintf('    %1$s%2$s: [%3$s]! @all(model: "%3$s")', $allQueryName, $queryArguments, $typeName);
 
-        $paginatedQueryName = str_plural(strtolower($typeName)) . 'Paginated';
+        $paginatedQueryName = str_plural(lcfirst($typeName)) . 'Paginated';
         $paginatedQuery = sprintf('    %1$s%2$s: [%3$s]! @paginate(model: "%3$s")', $paginatedQueryName, $queryArguments, $typeName);
 
         if (config('lighthouse-utils.authorization')) {

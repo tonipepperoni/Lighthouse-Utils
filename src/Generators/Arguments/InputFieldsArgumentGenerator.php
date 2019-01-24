@@ -4,7 +4,9 @@ namespace DeInternetJongens\LighthouseUtils\Generators\Arguments;
 
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\Date;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\DateTimeTz;
+use DeInternetJongens\LighthouseUtils\Schema\Scalars\Email;
 use DeInternetJongens\LighthouseUtils\Schema\Scalars\PostalCodeNl;
+use GraphQL\Type\Definition\BooleanType;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\FloatType;
 use GraphQL\Type\Definition\IntType;
@@ -23,7 +25,9 @@ class InputFieldsArgumentGenerator
         DateTime::class,
         DateTimeTz::class,
         PostalCodeNl::class,
-        EnumType::class
+        EnumType::class,
+        Email::class,
+        BooleanType::class,
     ];
 
     /** @var array */
